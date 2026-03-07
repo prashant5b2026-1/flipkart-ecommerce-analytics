@@ -1,2 +1,3 @@
-# flipkart-ecommerce-analytics
-sharpener first project
+# Flipkart E-commerce Sales Analytics
+
+

@@ -42,3 +42,30 @@ FROM (
     GROUP BY month, Description
 ) ranked_products
 WHERE rank = 1;
+
+-- Pareto analysis of customers
+WITH customer_revenue AS (
+    SELECT
+        CustomerID,
+        SUM(Quantity * UnitPrice) AS revenue
+    FROM ecommerce
+    GROUP BY CustomerID
+),
+ranked_customers AS (
+    SELECT
+        CustomerID,
+        revenue,
+        SUM(revenue) OVER (ORDER BY revenue DESC) AS cumulative_revenue,
+        SUM(revenue) OVER () AS total_revenue
+    FROM customer_revenue
+)
+SELECT
+    CustomerID,
+    revenue,
+    cumulative_revenue,
+    ROUND(
+        (cumulative_revenue / total_revenue)::numeric * 100,
+        2
+    ) AS cumulative_revenue_pct
+FROM ranked_customers
+ORDER BY revenue DESC;
